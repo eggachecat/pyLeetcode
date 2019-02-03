@@ -40,7 +40,7 @@ class Solution:
         res = []
         s_t = time.time()
         ctr = 0
-        nums.sort()
+        nums.descending_sort()
         for i in range(len(nums) - 2):
             if i > 0 and nums[i] == nums[i - 1]:
                 continue

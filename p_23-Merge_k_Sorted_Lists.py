@@ -1,4 +1,6 @@
 import random
+from data_structures.heap import Heap as saHeap
+from data_structures.queue import Queue as saQueue
 
 
 class ListNode:
@@ -8,9 +10,11 @@ class ListNode:
 
 
 def print_node_list(head):
+    vals = []
     while head is not None:
-        print(head.val)
+        vals.append(head.val)
         head = head.next
+    print(vals)
 
 
 class Solution:
@@ -80,25 +84,74 @@ def gen_rand_num():
     return num
 
 
-if __name__ == '__main__':
-    s = Solution()
+class SolutionWithHeap:
+    def mergeKLists(self, lists):
+        heap = saHeap()
+        n_lists = len(lists)
+        ptrs = [lists[i] for i in range(n_lists)]
+        valMap = dict()
 
-    k = 4
+        sol = None
+        head = None
+
+        for i in range(n_lists):
+            ptr = ptrs[i]
+            val = ptr.val
+            heap.append(val)
+            ptrs[i] = ptr.next
+            if val not in valMap:
+                valMap[val] = saQueue()
+            valMap[val].enter(ptr.next)
+
+        heap.build_min_heap()
+
+        while True:
+            heap.min_heapify(0)
+            minVal = heap.array[0]
+            print("min_heapify", minVal, heap.array, heap.max_index)
+            if sol is None:
+                head = sol = ListNode(minVal)
+            else:
+                sol.next = ListNode(minVal)
+                sol = sol.next
+            ptr = valMap[minVal].delete()  # ptrs[valMap[minVal]]
+            if ptr is not None:
+                newVal = ptr.val
+                heap.array[0] = newVal
+                if newVal not in valMap:
+                    valMap[newVal] = saQueue()
+                valMap[newVal].enter(ptr.next)
+            else:
+                heap.swap(0, heap.max_index)
+                heap.max_index -= 1
+
+            if heap.max_index < 0:
+                break
+        return head
+
+
+if __name__ == '__main__':
+    # s = Solution()
+    s = SolutionWithHeap()
+
+    k = 3
     nums_lists = []
     N = 3
 
     raw_nums_lists = [[gen_rand_num() for __ in range(N)] for _ in range(k)]
     for r in raw_nums_lists:
         r.sort()
-
-    for _ in range(k):
+    raw_nums_lists = [[-8, -7, -7, -5, 1, 1, 3, 4], [-2], [-10, -10, -7, 0, 1, 3], [2]]
+    for _ in range(len(raw_nums_lists)):
         print("========================")
         num_ = num_head_ = ListNode(raw_nums_lists[_][0])
-        for __ in range(1, N):
+        for __ in range(1, len(raw_nums_lists[_])):
             num_.next = ListNode(raw_nums_lists[_][__])
             num_ = num_.next
         nums_lists.append(num_head_)
-        print_node_list(num_head_)
+
+    for ptr in nums_lists:
+        print_node_list(ptr)
     print("========================")
     test = s.mergeKLists(nums_lists)
     print("++++++++++++++++++++++++++++++++")

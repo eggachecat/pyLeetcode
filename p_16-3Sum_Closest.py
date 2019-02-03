@@ -5,7 +5,7 @@ class Solution:
         best_diff = 1000000000
         best_sum = 0
 
-        nums.sort()
+        nums.descending_sort()
         for i in range(len(nums) - 2):
             if i > 0 and nums[i] == nums[i - 1]:
                 continue

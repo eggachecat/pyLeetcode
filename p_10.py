@@ -13,7 +13,7 @@ class Solution:
 
         exist_shit = p.find(".*")
         if exist_shit > 0:
-            print(ex)
+            print(exist_shit)
             exit()
 
         automato = []
